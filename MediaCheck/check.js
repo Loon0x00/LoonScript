@@ -6,7 +6,7 @@
  * 2022-04-10
  * 
  * [Script]
- * generic script-path=check.js, tag=流媒体-解锁查询, img-url=checkmark.seal.system
+ * generic script-path=https://raw.githubusercontent.com/Loon0x00/LoonScript/main/MediaCheck/check.js, tag=流媒体-解锁查询, img-url=checkmark.seal.system
  */
 
 const NF_BASE_URL = "https://www.netflix.com/title/81215567";
