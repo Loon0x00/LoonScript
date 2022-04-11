@@ -6,3 +6,10 @@
 会针对Loon进行更新和维护，有问题可提issue
 ## 版权
 如有侵权请及时告知，会在第一时间删除
+
+## 有关编写Loon脚本的API和文档
+- [脚本格式](https://github.com/Loon0x00/LoonExampleConfig/blob/master/Script/script_README.md)
+
+- [脚本API](https://github.com/Loon0x00/LoonExampleConfig/blob/master/Script/script_API.md)
+
+- [订阅脚本格式](https://github.com/Loon0x00/LoonExampleConfig/blob/master/RemoteScript/RemoteScript_Example.plist)
