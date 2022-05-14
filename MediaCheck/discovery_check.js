@@ -25,7 +25,7 @@ let result = {
 let arrow = " ➟ "
 
 console.log("start execute");
-ytbTest().then(value => {
+discoveryTest().then(value => {
     let content = "--------------------------------------</br>"+([result["Discovery"]]).join("</br></br>")
     content = content + "</br>--------------------------------------</br>"+"<font color=#CD5C5C>"+"<b>节点</b> ➟ " + nodeName+ "</font>"
     content =`<p style="text-align: center; font-family: -apple-system; font-size: large; font-weight: thin">` + content + `</p>`

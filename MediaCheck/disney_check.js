@@ -28,14 +28,14 @@ let arrow = " ➟ "
 
 console.log("start execute");
 disneyLocation().then(value => {
-    let content = "--------------------------------------</br>"+([result["Disneyᐩ"]]).join("</br></br>")
+    let content = "--------------------------------------</br>"+([result["Disney"]]).join("</br></br>")
     content = content + "</br>--------------------------------------</br>"+"<font color=#CD5C5C>"+"<b>节点</b> ➟ " + nodeName+ "</font>"
     content =`<p style="text-align: center; font-family: -apple-system; font-size: large; font-weight: thin">` + content + `</p>`
     console.log(content);
     $done({"title":result["title"],"htmlMessage":content})
 }).catch (values => {
     console.log("reject:" + values);
-    let content = "--------------------------------------</br>"+([result["Disneyᐩ"]]).join("</br></br>")
+    let content = "--------------------------------------</br>"+([result["Disney"]]).join("</br></br>")
     content = content + "</br>--------------------------------------</br>"+"<font color=#CD5C5C>"+"<b>节点</b> ➟ " + nodeName+ "</font>"
     content =`<p style="text-align: center; font-family: -apple-system; font-size: large; font-weight: thin">` + content + `</p>`
     $done({"title":result["title"],"htmlMessage":content})

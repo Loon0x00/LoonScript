@@ -6,7 +6,7 @@
  * For Loon 373+ Only, 小于373版本会有bug
  * 更新于：2022-04-12
  * 
- * generic script-path=https://raw.githubusercontent.com/Loon0x00/LoonScript/main/MediaCheck/nf_check.js, tag=YouTube-解锁查询, img-url=checkmark.seal.system
+ * generic script-path=https://raw.githubusercontent.com/Loon0x00/LoonScript/main/MediaCheck/ytb_check.js, tag=YouTube-解锁查询, img-url=checkmark.seal.system
  */
 
  const YTB_BASE_URL = "https://www.youtube.com/premium";
