@@ -188,7 +188,7 @@ function ytbTest() {
                     resolve(region);
                 }
             } else {
-                result["Discovery"] = "<b>YouTube Premium: </b>检测失败 ❗️";
+                result["YouTube"] = "<b>YouTube Premium: </b>检测失败 ❗️";
                 resolve(response.status);
             }
         })
@@ -235,7 +235,7 @@ function daznTest() {
                 }
                 resolve(region);
             } else {
-                result["Discovery"] = "<b>Dazn: </b>检测失败 ❗️";
+                result["Dazn"] = "<b>Dazn: </b>检测失败 ❗️";
                 resolve(response.status);
             }
         })
