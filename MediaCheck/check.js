@@ -1,14 +1,12 @@
-/**
- * Thanks to & modified from 
+/*
+ * 感谢并修改自
  * https://raw.githubusercontent.com/KOP-XIAO/QuantumultX/master/Scripts/streaming-ui-check.js
- * 
+ * 节点检测工具
  * 脚本功能：检查节点是否支持以下流媒体服务：NetFlix、Disney、YouTuBe、Dazn、Param
  * For Loon 373+ Only, 小于373版本会有bug
- * 更新于：2022-04-11
- * 脚本使用方式：将以下配置粘贴于Loon配置文件中的[Script]模块下，也可以进行UI添加脚本，添加后需开启Loon代理，在策略组或者所有节点页面，选择一个节点长按，出现菜单后进行测试
- * 
- * [Script]
- * generic script-path=https://raw.githubusercontent.com/Loon0x00/LoonScript/main/MediaCheck/check.js, tag=流媒体-解锁查询, img-url=checkmark.seal.system
+ * 更新于：2023-04-04
+ * 原作者：XIAO_KOP
+ * 现作者：Loon0x00
  */
 
 const NF_BASE_URL = "https://www.netflix.com/title/81215567";
@@ -21,13 +19,16 @@ const Param_BASE_URL = "https://www.paramountplus.com/"
 const Discovery_token_BASE_URL = "https://us1-prod-direct.discoveryplus.com/token?deviceId=d1a4a5d25212400d1e6985984604d740&realm=go&shortlived=true"
 const Discovery_BASE_URL = "https://us1-prod-direct.discoveryplus.com/users/me"
 
+const GPT_BASE_URL = 'https://chat.openai.com/'
+const GPT_RegionL_URL = 'https://chat.openai.com/cdn-cgi/trace'
+
 var inputParams = $environment.params;
 var nodeName = inputParams.node;
 
 let flags = new Map([[ "AC" , "🇦🇨" ] ,["AE","🇦🇪"], [ "AF" , "🇦🇫" ] , [ "AI" , "🇦🇮" ] , [ "AL" , "🇦🇱" ] , [ "AM" , "🇦🇲" ] , [ "AQ" , "🇦🇶" ] , [ "AR" , "🇦🇷" ] , [ "AS" , "🇦🇸" ] , [ "AT" , "🇦🇹" ] , [ "AU" , "🇦🇺" ] , [ "AW" , "🇦🇼" ] , [ "AX" , "🇦🇽" ] , [ "AZ" , "🇦🇿" ] , ["BA", "🇧🇦"], [ "BB" , "🇧🇧" ] , [ "BD" , "🇧🇩" ] , [ "BE" , "🇧🇪" ] , [ "BF" , "🇧🇫" ] , [ "BG" , "🇧🇬" ] , [ "BH" , "🇧🇭" ] , [ "BI" , "🇧🇮" ] , [ "BJ" , "🇧🇯" ] , [ "BM" , "🇧🇲" ] , [ "BN" , "🇧🇳" ] , [ "BO" , "🇧🇴" ] , [ "BR" , "🇧🇷" ] , [ "BS" , "🇧🇸" ] , [ "BT" , "🇧🇹" ] , [ "BV" , "🇧🇻" ] , [ "BW" , "🇧🇼" ] , [ "BY" , "🇧🇾" ] , [ "BZ" , "🇧🇿" ] , [ "CA" , "🇨🇦" ] , [ "CF" , "🇨🇫" ] , [ "CH" , "🇨🇭" ] , [ "CK" , "🇨🇰" ] , [ "CL" , "🇨🇱" ] , [ "CM" , "🇨🇲" ] , [ "CN" , "🇨🇳" ] , [ "CO" , "🇨🇴" ] , [ "CP" , "🇨🇵" ] , [ "CR" , "🇨🇷" ] , [ "CU" , "🇨🇺" ] , [ "CV" , "🇨🇻" ] , [ "CW" , "🇨🇼" ] , [ "CX" , "🇨🇽" ] , [ "CY" , "🇨🇾" ] , [ "CZ" , "🇨🇿" ] , [ "DE" , "🇩🇪" ] , [ "DG" , "🇩🇬" ] , [ "DJ" , "🇩🇯" ] , [ "DK" , "🇩🇰" ] , [ "DM" , "🇩🇲" ] , [ "DO" , "🇩🇴" ] , [ "DZ" , "🇩🇿" ] , [ "EA" , "🇪🇦" ] , [ "EC" , "🇪🇨" ] , [ "EE" , "🇪🇪" ] , [ "EG" , "🇪🇬" ] , [ "EH" , "🇪🇭" ] , [ "ER" , "🇪🇷" ] , [ "ES" , "🇪🇸" ] , [ "ET" , "🇪🇹" ] , [ "EU" , "🇪🇺" ] , [ "FI" , "🇫🇮" ] , [ "FJ" , "🇫🇯" ] , [ "FK" , "🇫🇰" ] , [ "FM" , "🇫🇲" ] , [ "FO" , "🇫�" ] , [ "FR" , "🇫🇷" ] , [ "GA" , "🇬🇦" ] , [ "GB" , "🇬🇧" ] , [ "HK" , "🇭🇰" ] ,["HU","🇭🇺"], [ "ID" , "🇮🇩" ] , [ "IE" , "🇮🇪" ] , [ "IL" , "🇮🇱" ] , [ "IM" , "🇮🇲" ] , [ "IN" , "🇮🇳" ] , [ "IS" , "🇮🇸" ] , [ "IT" , "🇮🇹" ] , [ "JP" , "🇯🇵" ] , [ "KR" , "🇰🇷" ] , [ "LU" , "🇱🇺" ] , [ "MO" , "🇲🇴" ] , [ "MX" , "🇲🇽" ] , [ "MY" , "🇲🇾" ] , [ "NL" , "🇳🇱" ] , [ "PH" , "🇵🇭" ] , [ "RO" , "🇷🇴" ] , [ "RS" , "🇷🇸" ] , [ "RU" , "🇷🇺" ] , [ "RW" , "🇷🇼" ] , [ "SA" , "🇸🇦" ] , [ "SB" , "��🇧" ] , [ "SC" , "🇸🇨" ] , [ "SD" , "🇸🇩" ] , [ "SE" , "🇸🇪" ] , [ "SG" , "🇸🇬" ] , [ "TH" , "🇹🇭" ] , [ "TN" , "🇹🇳" ] , [ "TO" , "🇹🇴" ] , [ "TR" , "🇹🇷" ] , [ "TV" , "🇹🇻" ] , [ "TW" , "🇨🇳" ] , [ "UK" , "🇬🇧" ] , [ "UM" , "🇺🇲" ] , [ "US" , "🇺🇸" ] , [ "UY" , "🇺🇾" ] , [ "UZ" , "🇺🇿" ] , [ "VA" , "🇻🇦" ] , [ "VE" , "🇻🇪" ] , [ "VG" , "🇻🇬" ] , [ "VI" , "🇻🇮" ] , [ "VN" , "🇻🇳" ] , [ "ZA" , "🇿🇦"]])
 
 let result = {
-    "title": '    📺  流媒体服务查询',
+    "title": '  节点解锁查询',
     "YouTube": '<b>YouTube: </b>检测失败，请重试� ❗️',
     "Netflix": '<b>Netflix: </b>检测失败，请重试 ❗️',
     "Dazn": "<b>Dazn: </b>检测失败，请重试 ❗️",
@@ -38,16 +39,16 @@ let result = {
 
 let arrow = " ➟ "
 
-Promise.all([ytbTest(),disneyLocation(),nfTest(),daznTest(),parmTest(),discoveryTest()]).then(value => {
-    let content = "--------------------------------------</br>"+([result["Dazn"],result["Discovery"],result["Paramount"],result["Disney"],result["Netflix"],result["YouTube"]]).join("</br></br>")
-    content = content + "</br>--------------------------------------</br>"+"<font color=#CD5C5C>"+"<b>节点</b> ➟ " + nodeName+ "</font>"
+Promise.all([ytbTest(),disneyLocation(),nfTest(),daznTest(),parmTest(),discoveryTest(),gptTest()]).then(value => {
+    let content = "------------------------------------</br>"+([result["Dazn"],result["Discovery"],result["Paramount"],result["Disney"],result["Netflix"],result["ChatGPT"],result["YouTube"]]).join("</br></br>")
+    content = content + "</br>------------------------------------</br>"+"<font color=#CD5C5C>"+"<b>节点</b> ➟ " + nodeName+ "</font>"
     content =`<p style="text-align: center; font-family: -apple-system; font-size: large; font-weight: thin">` + content + `</p>`
     console.log(content);
     $done({"title":result["title"],"htmlMessage":content})
 }).catch (values => {
     console.log("reject:" + values);
-    let content = "--------------------------------------</br>"+([result["Dazn"],result["Discovery"],result["Paramount"],result["Disney"],result["Netflix"],result["YouTube"]]).join("</br></br>")
-    content = content + "</br>--------------------------------------</br>"+"<font color=#CD5C5C>"+"<b>节点</b> ➟ " + nodeName+ "</font>"
+    let content = "------------------------------------</br>"+([result["Dazn"],result["Discovery"],result["Paramount"],result["Disney"],result["Netflix"],result["ChatGPT"],result["YouTube"]]).join("</br></br>")
+    content = content + "</br>------------------------------------</br>"+"<font color=#CD5C5C>"+"<b>节点</b> ➟ " + nodeName+ "</font>"
     content =`<p style="text-align: center; font-family: -apple-system; font-size: large; font-weight: thin">` + content + `</p>`
     $done({"title":result["title"],"htmlMessage":content})
 })
@@ -57,7 +58,7 @@ function disneyLocation() {
         let params = {
             url: DISNEY_LOCATION_BASE_URL,
             node: nodeName,
-            timeout: 8000, //ms
+            timeout: 5000, //ms
             headers: {
                 'Accept-Language': 'en',
                 "Authorization": 'ZGlzbmV5JmJyb3dzZXImMS4wLjA.Cu56AgSfBTDag5NiRA81oLHkDZfu5L3CKadnefEAY84',
@@ -123,7 +124,7 @@ function disneyHomePage() {
         let params = {
             url: DISNEY_BASE_URL,
             node: nodeName,
-            timeout: 8000, //ms
+            timeout: 5000, //ms
             headers: {
                 'Accept-Language': 'en',
                 'User-Agent': UA,
@@ -208,7 +209,7 @@ function daznTest() {
         let params = {
             url: Dazn_BASE_URL,
             node: nodeName,
-            timeout: 9000, //ms
+            timeout: 5000, //ms
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
                 "Content-Type": "application/json"
@@ -248,7 +249,7 @@ function parmTest() {
         let params = {
             url: Param_BASE_URL,
             node: nodeName,
-            timeout: 9000, //ms
+            timeout: 5000, //ms
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
             }
@@ -280,7 +281,7 @@ function discoveryTest() {
         let params = {
             url: Discovery_token_BASE_URL,
             node: nodeName,
-            timeout: 8000, //ms
+            timeout: 5000, //ms
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
             }
@@ -301,12 +302,13 @@ function discoveryTest() {
                 let p = {
                     url: Discovery_BASE_URL,
                     node: nodeName,
-                    timeout: 8000,
+                    timeout: 5000,
                     headers: {
                         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
+                        "Cookie": cookievalid,
                     }
                 }
-                $httpClient.get(params, (emsg, res, resData) => {
+                $httpClient.get(p, (emsg, res, resData) => {
                     console.log("----------Discory--------------");
                     if (emsg) {
                         console.log("Discovery request error:" + errormsg);
@@ -343,7 +345,7 @@ function nfTest() {
         let params = {
             url: NF_BASE_URL,
             node: nodeName,
-            timeout: 8000, //ms
+            timeout: 5000, //ms
             headers: {
                 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.61 Safari/537.36',
             }
@@ -378,6 +380,64 @@ function nfTest() {
             } else {
                 result["Netflix"] = "<b>Netflix: </b>检测失败 ❗️";
                 resolve(response.status)
+            }
+        })
+    })
+}
+
+//chatgpt
+support_countryCodes=["T1","XX","AL","DZ","AD","AO","AG","AR","AM","AU","AT","AZ","BS","BD","BB","BE","BZ","BJ","BT","BA","BW","BR","BG","BF","CV","CA","CL","CO","KM","CR","HR","CY","DK","DJ","DM","DO","EC","SV","EE","FJ","FI","FR","GA","GM","GE","DE","GH","GR","GD","GT","GN","GW","GY","HT","HN","HU","IS","IN","ID","IQ","IE","IL","IT","JM","JP","JO","KZ","KE","KI","KW","KG","LV","LB","LS","LR","LI","LT","LU","MG","MW","MY","MV","ML","MT","MH","MR","MU","MX","MC","MN","ME","MA","MZ","MM","NA","NR","NP","NL","NZ","NI","NE","NG","MK","NO","OM","PK","PW","PA","PG","PE","PH","PL","PT","QA","RO","RW","KN","LC","VC","WS","SM","ST","SN","RS","SC","SL","SG","SK","SI","SB","ZA","ES","LK","SR","SE","CH","TH","TG","TO","TT","TN","TR","TV","UG","AE","US","UY","VU","ZM","BO","BN","CG","CZ","VA","FM","MD","PS","KR","TW","TZ","TL","GB"]
+
+function gptTest() {
+    return new Promise((resolve, reject) => {
+        let params = {
+            url: GPT_BASE_URL,
+            node: nodeName,
+            timeout: 5000, //ms
+        }
+        $httpClient.get(params, (errormsg,response,data) => {
+            console.log("----------GPT--------------");
+            if (errormsg) {
+                console.log("GPT request failed:" + errormsg);
+                resolve(errormsg);
+                return;
+            }
+
+            let resp = JSON.stringify(data)
+            console.log("ChatGPT Main Test")
+            let jdg = resp.indexOf("text/plain")
+            if (jdg == -1) {
+                let p = {
+                    url: GPT_RegionL_URL,
+                    node: nodeName,
+                    timeout: 5000, //ms
+                }
+                $httpClient.get(p, (emsg, resheader, resData) => {
+                    console.log("----------GPT RegionL--------------");
+                    if (emsg) {
+                        console.log("GPT RegionL request error:" + errormsg);
+                        resolve(emsg);
+                        return;
+                    }
+
+                    console.log("ChatGPT Region Test")
+                    let region = resData.split("loc=")[1].split("\n")[0]
+                    console.log("ChatGPT Region: "+region)
+                    let res = support_countryCodes.indexOf(region)
+                    if (res != -1) {
+                        result["ChatGPT"] = "<b>ChatGPT: </b>支持 "+arrow+ "⟦"+flags.get(region.toUpperCase())+"⟧ 🎉"
+                        console.log("支持 ChatGPT")
+                        resolve(region)
+                    } else {
+                        result["ChatGPT"] = "<b>ChatGPT: </b>未支持 🚫"
+                        console.log("不支持 ChatGPT")
+                        resolve("不支持 ChatGPT")
+                    }
+                })
+            } else {
+                result["ChatGPT"] = "<b>ChatGPT: </b>未支持 🚫"
+                console.log("不支持 ChatGPT")
+                resolve("不支持 ChatGPT")
             }
         })
     })
